@@ -16,6 +16,8 @@ import ale_experiment
 import ale_agent
 import q_network
 
+from ctypes import *
+
 def process_args(args, defaults, description):
     """
     Handle the command line.
@@ -197,9 +199,9 @@ def launch(args, defaults, description):
             ale.setBool('sound', False) # Sound doesn't work on OSX
 
         ale.setBool('display_screen', False)
-        from ctypes import *
+        
         from numpy.ctypeslib import as_ctypes
-        ale.setString('record_screen_dir',c_char_p("record"))
+        ale.setString('record_screen_dir',("record").encode('ascii'))
     else:
         ale.setBool('display_screen', False)
     ale.setFloat('repeat_action_probability',
