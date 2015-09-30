@@ -199,7 +199,6 @@ def launch(args, defaults, description):
         ale.setBool('display_screen', True)
         from ctypes import *
         from numpy.ctypeslib import as_ctypes
-        import os
         #ale.setString('record_screen_dir',"record")
         print type(ale.getString('record_screen_dir'))
     else:
