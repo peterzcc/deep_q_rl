@@ -23,6 +23,6 @@ export CPATH=$CUDNN_PATH
 export PYTHONPATH=$CUDNN_PATH
 export PATH=$PATH:$CUDNN_PATH
 #locate libnppc.so
-./ale_run_watch.py breakout_09-27-04-44_0p00025_0p99/network_file_115.pkl breakout
+python ale_run_watch.py breakout_09-27-04-44_0p00025_0p99/network_file_115.pkl breakout
 #python -c 'from theano.sandbox.cuda.dnn import dnn_available; print dnn_available(); print dnn_available.msg'
 
