@@ -196,7 +196,10 @@ def launch(args, defaults, description):
             pygame.init()
             ale.setBool('sound', False) # Sound doesn't work on OSX
 
-    ale.setBool('display_screen', parameters.display_screen)
+        ale.setBool('display_screen', True)
+        ale.setString("record_screen_dir","record")
+      else:
+        ale.setBool('display_screen', False)
     ale.setFloat('repeat_action_probability',
                  parameters.repeat_action_probability)
 
