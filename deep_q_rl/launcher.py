@@ -197,7 +197,11 @@ def launch(args, defaults, description):
             ale.setBool('sound', False) # Sound doesn't work on OSX
 
         ale.setBool('display_screen', True)
-        ale.setString("record_screen_dir","record")
+        from ctypes import *
+        from numpy.ctypeslib import as_ctypes
+        import os
+        #ale.setString('record_screen_dir',"record")
+        print type(ale.getString('record_screen_dir'))
     else:
         ale.setBool('display_screen', False)
     ale.setFloat('repeat_action_probability',
