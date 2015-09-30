@@ -23,6 +23,8 @@ export CPATH=$CUDNN_PATH
 export PYTHONPATH=$CUDNN_PATH
 export PATH=$PATH:$CUDNN_PATH
 #locate libnppc.so
-python ale_run_watch.py breakout_09-27-04-44_0p00025_0p99/network_file_115.pkl breakout
+# python ale_run_watch.py breakout_09-27-04-44_0p00025_0p99/network_file_115.pkl breakout
+ffmpeg -r 60 -i record/%06d.png -f mov -c:v libx264 agent.mov
+
 #python -c 'from theano.sandbox.cuda.dnn import dnn_available; print dnn_available(); print dnn_available.msg'
 
