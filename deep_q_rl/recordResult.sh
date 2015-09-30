@@ -26,7 +26,7 @@ export PATH=$PATH:$CUDNN_PATH
 NETWORK=network_file_115
 python ale_run_watch.py breakout_09-27-04-44_0p00025_0p99/NETWORK.pkl breakout
 rm -f $NETWORK.mp4
-ffmpeg -r 60 -i record/%06d.png -c:v mpeg4 $NETWORK.mp4
+ffmpeg -r 60 -i record/%06d.png -c:v mpeg4 video/$NETWORK.mp4
 rm record/*
 #python -c 'from theano.sandbox.cuda.dnn import dnn_available; print dnn_available(); print dnn_available.msg'
 
