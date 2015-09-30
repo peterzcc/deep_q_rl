@@ -196,7 +196,7 @@ def launch(args, defaults, description):
             pygame.init()
             ale.setBool('sound', False) # Sound doesn't work on OSX
 
-        ale.setBool('display_screen', True)
+        ale.setBool('display_screen', False)
         from ctypes import *
         from numpy.ctypeslib import as_ctypes
         #ale.setString('record_screen_dir',"record")
