@@ -254,6 +254,8 @@ class NeuralAgent(object):
             if terminal or self.episode_counter == 0:
                 self.episode_counter += 1
                 self.total_reward += self.episode_reward
+            logging.info("steps/second: {:.2f}, avg: {:.2f}".format(
+                self.step_counter/total_time, self.steps_sec_ema))
         else:
 
             # Store the latest sample.
