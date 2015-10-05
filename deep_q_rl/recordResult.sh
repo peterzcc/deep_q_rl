@@ -23,8 +23,11 @@ export CPATH=$CUDNN_PATH
 export PYTHONPATH=$CUDNN_PATH
 export PATH=$PATH:$CUDNN_PATH
 #locate libnppc.so
-NETWORK=breakout_10-02-06-30_0p00025_0p99/network_file_53
+NETWORK=breakout_10-02-06-30_0p00025_0p99/network_file_191
 rm record/*.png
 python ale_run_watch.py $NETWORK.pkl breakout && rm -f $NETWORK.mp4 && ffmpeg -r 60 -i record/%06d.png -c:v mpeg4 $NETWORK.mp4
-#python -c 'from theano.sandbox.cuda.dnn import dnn_available; print dnn_available(); print dnn_available.msg'
+
+NETWORK=breakout_10-02-06-30_0p00025_0p99/network_file_192
+rm record/*.png
+python ale_run_watch.py $NETWORK.pkl breakout && rm -f $NETWORK.mp4 && ffmpeg -r 60 -i record/%06d.png -c:v mpeg4 $NETWORK.mp4
 
