@@ -86,9 +86,11 @@ class DeepQLearner:
                      dtype=theano.config.floatX))
 
         q_vals = lasagne.layers.get_output(self.l_out, states / input_scale)
-        
+
         if self.freeze_interval > 0:
             next_q_vals = lasagne.layers.get_output(self.next_l_out,
+                                                    next_states / input_scale)
+            q_vals_for_actsel = lasagne.layers.get_output(self.l_out,
                                                     next_states / input_scale)
         else:
             next_q_vals = lasagne.layers.get_output(self.l_out,
@@ -98,10 +100,11 @@ class DeepQLearner:
         terminalsX = terminals.astype(theano.config.floatX)
         actionmask = T.eq(T.arange(num_actions).reshape((1, -1)),
                           actions.reshape((-1, 1))).astype(theano.config.floatX)
-
+        targetActionMask = T.eq(T.arange(num_actions).reshape((1, -1)),
+                          T.argmax(q_vals_for_actsel, axis=1, keepdims=True).reshape((-1, 1))).astype(theano.config.floatX)
         target = (rewards +
                   (T.ones_like(terminalsX) - terminalsX) *
-                  self.discount * T.max(next_q_vals, axis=1, keepdims=True))
+                  self.discount * (next_q_vals * targetActionMask).sum(axis=1).reshape((-1, 1)))
         output = (q_vals * actionmask).sum(axis=1).reshape((-1, 1))
         diff = target - output
 
@@ -111,7 +114,7 @@ class DeepQLearner:
             # the clip bounds. To avoid this, we extend the loss
             # linearly past the clip point to keep the gradient constant
             # in that regime.
-            # 
+            #
             # This is equivalent to declaring d loss/d q_vals to be
             # equal to the clipped diff, then backpropagating from
             # there, which is what the DeepMind implementation does.
@@ -128,7 +131,7 @@ class DeepQLearner:
         else:
             raise ValueError("Bad accumulator: {}".format(batch_accumulator))
 
-        params = lasagne.layers.helper.get_all_params(self.l_out)  
+        params = lasagne.layers.helper.get_all_params(self.l_out)
         train_givens = {
             states: self.imgs_shared[:, :-1],
             next_states: self.imgs_shared[:, 1:],
