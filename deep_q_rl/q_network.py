@@ -39,6 +39,7 @@ class DeepQLearner:
         self.discount = discount
         self.rho = rho
         self.lr = learning_rate
+        lr = T.scalar('lr',dtype=config.floatX)
         self.rms_epsilon = rms_epsilon
         self.momentum = momentum
         self.clip_delta = clip_delta
@@ -140,7 +141,7 @@ class DeepQLearner:
             terminals: self.terminals_shared
         }
         if update_rule == 'deepmind_rmsprop':
-            updates = deepmind_rmsprop(loss, params, self.lr, self.rho,
+            updates = deepmind_rmsprop(loss, params, lr, self.rho,
                                        self.rms_epsilon)
         elif update_rule == 'rmsprop':
             updates = lasagne.updates.rmsprop(loss, params, self.lr, self.rho,
@@ -154,7 +155,7 @@ class DeepQLearner:
             updates = lasagne.updates.apply_momentum(updates, None,
                                                      self.momentum)
 
-        self._train = theano.function([], [loss], updates=updates,
+        self._train = theano.function([theano.Param(lr)], [loss], updates=updates,
                                       givens=train_givens)
         q_givens = {
             states: self.state_shared.reshape((1,
@@ -210,7 +211,7 @@ class DeepQLearner:
         if (self.freeze_interval > 0 and
             self.update_counter % self.freeze_interval == 0):
             self.reset_q_hat()
-        loss = self._train()
+        loss = self._train(lr=self.lr)
         self.update_counter += 1
         return np.sqrt(loss)
 
