@@ -39,7 +39,7 @@ class DeepQLearner:
         self.discount = discount
         self.rho = rho
         self.lr = learning_rate
-        lr = T.scalar('lr',dtype=config.floatX)
+        lr = T.scalar('lr',dtype=theano.config.floatX)
         self.rms_epsilon = rms_epsilon
         self.momentum = momentum
         self.clip_delta = clip_delta
