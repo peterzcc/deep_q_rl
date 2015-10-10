@@ -270,7 +270,7 @@ class NeuralAgent(object):
 
             logging.info("steps/second: {:.2f}, avg: {:.2f}".format(
                 self.step_counter/total_time, self.steps_sec_ema))
-
+            logging.info("Learning rate: {:.8f}".format(self.network.lr))
             if self.batch_counter > 0:
                 self._update_learning_file()
                 logging.info("average loss: {:.4f}".format(\
@@ -282,6 +282,8 @@ class NeuralAgent(object):
                         '.pkl', 'w')
         cPickle.dump(self.network, net_file, -1)
         net_file.close()
+        if epoch >= 20 and epoch%10 == 0:
+            self.network.lr = self.network.lr * 0.8
 
     def start_testing(self):
         self.testing = True
