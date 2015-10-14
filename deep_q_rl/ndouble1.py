@@ -32,7 +32,7 @@ class Defaults:
     # ----------------------
     UPDATE_RULE = 'deepmind_rmsprop'
     BATCH_ACCUMULATOR = 'sum'
-    LEARNING_RATE = .00025
+    LEARNING_RATE = .00025 * 0.8**11
     DISCOUNT = .99
     RMS_DECAY = .95 # (Rho)
     RMS_EPSILON = .01
