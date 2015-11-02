@@ -32,7 +32,7 @@ class Defaults:
     # ----------------------
     UPDATE_RULE = 'adadelta'
     BATCH_ACCUMULATOR = 'sum'
-    LEARNING_RATE = 1.0
+    LEARNING_RATE = 0.001
     DISCOUNT = .99
     RMS_DECAY = .95 # (Rho)
     RMS_EPSILON = .01
