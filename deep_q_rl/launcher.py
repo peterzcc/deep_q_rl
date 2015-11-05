@@ -211,6 +211,7 @@ def launch(args, defaults, description):
 
     num_actions = len(ale.getMinimalActionSet())
 
+
     if parameters.nn_file is None:
         network = q_network.DeepQLearner(defaults.RESIZED_WIDTH,
                                          defaults.RESIZED_HEIGHT,

@@ -55,6 +55,7 @@ class ALEExperiment(object):
                 self.run_epoch(epoch, self.test_length, True)
                 self.agent.finish_testing(epoch)
 
+
     def run_epoch(self, epoch, num_steps, testing=False):
         """ Run one 'epoch' of training or testing, where an epoch is defined
         by the number of steps executed.  Prints a progress report after
@@ -175,6 +176,7 @@ class ALEExperiment(object):
                                  interpolation=cv2.INTER_LINEAR)
 
             # Crop the part we want
+            
             crop_y_cutoff = resize_height - CROP_OFFSET - self.resized_height
             cropped = resized[crop_y_cutoff:
                               crop_y_cutoff + self.resized_height, :]
