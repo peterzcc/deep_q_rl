@@ -234,6 +234,17 @@ class DeepQLearner:
         all_params = lasagne.layers.helper.get_all_param_values(self.l_out)
         lasagne.layers.helper.set_all_param_values(self.next_l_out, all_params)
 
+    def get_pretrained_network(self,pretrained_network):
+        l_layers = lasagne.layers.helper.get_all_layers(self.l_out)
+        l_hidden1 = l_layers[-2]
+        pretrained_layers = lasagne.layers.helper.get_all_layers(pretrained_network.l_out)
+        pretrained_l_hidden1 = pretrained_layers[-2]
+        #print "number of layers"+str(len(l_layers))
+        #print "number of pretrained layers" + str(len(pretrained_layers))
+        pretrained_l_hidden1_values = lasagne.layers.helper.get_all_param_values(pretrained_l_hidden1)
+        lasagne.layers.helper.set_all_param_values(l_hidden1, pretrained_l_hidden1_values)
+        self.reset_q_hat()
+
     def build_nature_network(self, input_width, input_height, output_dim,
                              num_frames, batch_size):
         """
