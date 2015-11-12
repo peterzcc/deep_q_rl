@@ -23,11 +23,15 @@ export CPATH=$CUDNN_PATH
 export PYTHONPATH=$CUDNN_PATH
 export PATH=$PATH:$CUDNN_PATH
 #locate libnppc.so
-NETWORK=breakout_10-02-06-30_0p00025_0p99/network_file_192
-rm record/*.png
-python ale_run_watch.py $NETWORK.pkl breakout && rm -f $NETWORK.mp4 && ffmpeg -r 60 -i record/%06d.png -c:v mpeg4 $NETWORK.mp4
+export THEANO_FLAGS='device=gpu0'
+NETWORK=superbreakout_11-11-14-06_0p00025_0p99/network_file_1
+rm -f record/*.png
+python ale_run_watch.py $NETWORK.pkl superbreakout && rm -f $NETWORK.mp4 && ffmpeg -r 60 -i record/%06d.png -c:v mpeg4 $NETWORK.mp4
 
-NETWORK=breakout_10-02-06-30_0p00025_0p99/network_file_193
-rm record/*.png
-python ale_run_watch.py $NETWORK.pkl breakout && rm -f $NETWORK.mp4 && ffmpeg -r 60 -i record/%06d.png -c:v mpeg4 $NETWORK.mp4
+NETWORK=superbreakout_11-11-14-06_0p00025_0p99/network_file_2
+rm -f record/*.png
+python ale_run_watch.py $NETWORK.pkl superbreakout && rm -f $NETWORK.mp4 && ffmpeg -r 60 -i record/%06d.png -c:v mpeg4 $NETWORK.mp4
 
+NETWORK=breakout_11-01-14-14_0p01_0p99/netowrk_file_200
+rm -f record/*.png
+python ale_run_watch.py $NETWORK.pkl breakout && rm -f $NETWORK.mp4 && ffmpeg -r 60 -i record/%06d.png -c:v mpeg4 $NETWORK.mp4
