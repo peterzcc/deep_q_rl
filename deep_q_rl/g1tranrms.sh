@@ -24,6 +24,6 @@ export PYTHONPATH=$CUDNN_PATH
 export PATH=$PATH:$CUDNN_PATH
 #locate libnppc.so
 export THEANO_FLAGS='device=gpu1'
-./run_nature.py --rom superbreakout --nn-file breakout_11-01-14-14_0p01_0p99/network_file_200.pkl
+./run_nature.py --rom superbreakout --nn-file breakout_11-04-11-05_7e-05_0p99/network_file_176.pkl
 #python -c 'from theano.sandbox.cuda.dnn import dnn_available; print dnn_available(); print dnn_available.msg'
 
