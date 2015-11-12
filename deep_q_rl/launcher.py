@@ -231,8 +231,8 @@ def launch(args, defaults, description):
                                          rng)
     else:
         handle = open(parameters.nn_file, 'r')
-        pretrained_network = cPickle.load(handle)
-        network = q_network.DeepQLearner(defaults.RESIZED_WIDTH,
+        #pretrained_network = cPickle.load(handle)
+        '''network = q_network.DeepQLearner(defaults.RESIZED_WIDTH,
                                          defaults.RESIZED_HEIGHT,
                                          num_actions,
                                          parameters.phi_length,
@@ -248,7 +248,8 @@ def launch(args, defaults, description):
                                          parameters.update_rule,
                                          parameters.batch_accumulator,
                                          rng)
-        network.get_pretrained_network(pretrained_network,-1)
+        '''#network.get_pretrained_network(pretrained_network,-1)
+        network = cPickle.load(handle)
 
     agent = ale_agent.NeuralAgent(network,
                                   parameters.epsilon_start,
