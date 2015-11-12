@@ -248,7 +248,7 @@ def launch(args, defaults, description):
                                          parameters.update_rule,
                                          parameters.batch_accumulator,
                                          rng)
-        network.get_pretrained_network(pretrained_network)
+        network.get_pretrained_network(pretrained_network,-1)
 
     agent = ale_agent.NeuralAgent(network,
                                   parameters.epsilon_start,
