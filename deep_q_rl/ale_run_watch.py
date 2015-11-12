@@ -9,7 +9,7 @@ import subprocess
 import sys
 
 def run_watch():
-    command = ['./run_nature.py','--epochs','1', '--steps-per-epoch', '0',
+    command = ['./run_adagrad.py','--epochs','1', '--steps-per-epoch', '0',
                '--test-length', '5000', '--nn-file', sys.argv[1],
                '--display-screen']
 
