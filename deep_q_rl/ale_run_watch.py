@@ -10,7 +10,7 @@ import sys
 
 def run_watch():
     command = ['./run_nature.py','--epochs','1', '--steps-per-epoch', '0',
-               '--test-length', '5000', '--nn-file', sys.argv[1],
+               '--test-length', '2500', '--nn-file', sys.argv[1],
                '--display-screen']
 
     if len(sys.argv) > 2:
