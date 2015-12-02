@@ -23,7 +23,7 @@ export CPATH=$CUDNN_PATH
 export PYTHONPATH=$CUDNN_PATH
 export PATH=$PATH:$CUDNN_PATH
 #locate libnppc.so
-export THEANO_FLAGS='device=gpu0'
-NETWORK=superbreakout_11-11-14-06_0p00025_0p99/network_file_17
+export THEANO_FLAGS='device=gpu1'
+NETWORK=tlantis_11-26-06-09_0p01_0p99/network_file_49.pkl
 rm -f record/*.png
 python ale_run_watch.py $NETWORK.pkl superbreakout && rm -f $NETWORK.mp4 && ffmpeg -r 60 -i record/%06d.png -c:v mpeg4 $NETWORK.mp4
