@@ -278,7 +278,7 @@ class NeuralAgent(object):
 
 
     def finish_epoch(self, epoch):
-        if epoch < 50 || epoch % 10 == 0:
+        if epoch < 50 or epoch % 10 == 0:
             net_file = open(self.exp_dir + '/network_file_' + str(epoch) + \
                         '.pkl', 'w')
             cPickle.dump(self.network, net_file, -1)
