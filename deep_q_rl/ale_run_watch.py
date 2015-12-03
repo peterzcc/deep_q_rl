@@ -9,7 +9,7 @@ import subprocess
 import sys
 
 def run_watch():
-    command = ['./run_nature.py','--epochs','1', '--steps-per-epoch', '0',
+    command = ['./run_adagrad.py','--epochs','1', '--steps-per-epoch', '0',
                '--test-length', '2500', '--nn-file', sys.argv[1],
                '--display-screen']
 
@@ -17,7 +17,7 @@ def run_watch():
         command.extend(['--rom', sys.argv[2]])
 
     p1 = subprocess.Popen(command)
-    
+
     p1.wait()
 
 if __name__ == "__main__":
