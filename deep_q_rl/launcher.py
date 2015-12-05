@@ -302,7 +302,18 @@ def launchMulti(args, defaults, description):
                                                             ale,
                                                             rng,
                                                             num_actions)
-    experiment.run()
+    full_rom_path2 = getFullRomPath('breakout',defaults.BASE_ROM_PATH)
+    ale2, num_actions2 = setupAle(full_rom_path2,
+                                parameters.display_screen,
+                                parameters.repeat_action_probability,
+                                rng)
+    network2, agent2, experiment2 = buildExperimentAgentNetwork(defaults,parameters,
+                                                            ale2,
+                                                            rng,
+                                                            num_actions2)
+    experiment.run_episode(100000,False)
+    experiment2.run_episode(100000,False)
+    # experiment.run()
 def buildExperimentAgentNetwork(defaults,parameters,ale,rng,num_actions):
     if parameters.nn_file is None:
         network = q_network.DeepQLearner(defaults.RESIZED_WIDTH,
