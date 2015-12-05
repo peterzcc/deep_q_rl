@@ -293,11 +293,17 @@ def launchMulti(args, defaults, description):
 
     if parameters.cudnn_deterministic:
         theano.config.dnn.conv.algo_bwd = 'deterministic'
-    ale, num_actions = setupAle(full_rom_path,parameters.display_screen,parameters.repeat_action_probability,rng)
+    ale, num_actions = setupAle(full_rom_path,
+                                parameters.display_screen,
+                                parameters.repeat_action_probability,
+                                rng)
 
-    network, agent, experiment = buildExperimentAgentNetwork(defaults,parameters,ale,rng)
+    network, agent, experiment = buildExperimentAgentNetwork(defaults,parameters,
+                                                            ale,
+                                                            rng,
+                                                            num_actions)
     experiment.run()
-def buildExperimentAgentNetwork(defaults,parameters,ale,rng):
+def buildExperimentAgentNetwork(defaults,parameters,ale,rng,num_actions):
     if parameters.nn_file is None:
         network = q_network.DeepQLearner(defaults.RESIZED_WIDTH,
                                          defaults.RESIZED_HEIGHT,
