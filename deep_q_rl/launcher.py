@@ -199,7 +199,7 @@ def launch(args, defaults, description):
             ale.setBool('sound', False) # Sound doesn't work on OSX
 
         ale.setBool('display_screen', False)
-        
+
         from numpy.ctypeslib import as_ctypes
         ale.setString('record_screen_dir',("record").encode('ascii'))
     else:
@@ -275,8 +275,121 @@ def launch(args, defaults, description):
 
 
     experiment.run()
+def launchMulti(args, defaults, description):
+    """
+    Execute a complete training run.
+    """
+
+    logging.basicConfig(level=logging.INFO)
+    parameters = process_args(args, defaults, description)
+
+    full_rom_path = getFullRomPath(parameters.rom,defaults.BASE_ROM_PATH)
+
+    if parameters.deterministic:
+        rng = np.random.RandomState(123456)
+    else:
+        rng = np.random.RandomState()
+
+    if parameters.cudnn_deterministic:
+        theano.config.dnn.conv.algo_bwd = 'deterministic'
+    ale, num_actions = setupAle(full_rom_path,parameters.display_screen,parameters.repeat_action_probability)
 
 
+    if parameters.nn_file is None:
+        network = q_network.DeepQLearner(defaults.RESIZED_WIDTH,
+                                         defaults.RESIZED_HEIGHT,
+                                         num_actions,
+                                         parameters.phi_length,
+                                         parameters.discount,
+                                         parameters.learning_rate,
+                                         parameters.rms_decay,
+                                         parameters.rms_epsilon,
+                                         parameters.momentum,
+                                         parameters.clip_delta,
+                                         parameters.freeze_interval,
+                                         parameters.batch_size,
+                                         parameters.network_type,
+                                         parameters.update_rule,
+                                         parameters.batch_accumulator,
+                                         rng)
+    else:
+        handle = open(parameters.nn_file, 'r')
+        pretrained_network = cPickle.load(handle)
+        network = q_network.DeepQLearner(defaults.RESIZED_WIDTH,
+                                         defaults.RESIZED_HEIGHT,
+                                         num_actions,
+                                         parameters.phi_length,
+                                         parameters.discount,
+                                         parameters.learning_rate,
+                                         parameters.rms_decay,
+                                         parameters.rms_epsilon,
+                                         parameters.momentum,
+                                         parameters.clip_delta,
+                                         parameters.freeze_interval,
+                                         parameters.batch_size,
+                                         parameters.network_type,
+                                         parameters.update_rule,
+                                         parameters.batch_accumulator,
+                                         rng)
+        network.get_pretrained_network(pretrained_network,-1)
+        #network = cPickle.load(handle)
 
+    agent = ale_agent.NeuralAgent(network,
+                                  parameters.epsilon_start,
+                                  parameters.epsilon_min,
+                                  parameters.epsilon_decay,
+                                  parameters.replay_memory_size,
+                                  parameters.experiment_prefix,
+                                  parameters.replay_start_size,
+                                  parameters.update_frequency,
+                                  rng)
+
+    experiment = ale_experiment.ALEExperiment(ale, agent,
+                                              defaults.RESIZED_WIDTH,
+                                              defaults.RESIZED_HEIGHT,
+                                              parameters.resize_method,
+                                              parameters.epochs,
+                                              parameters.steps_per_epoch,
+                                              parameters.steps_per_test,
+                                              parameters.frame_skip,
+                                              parameters.death_ends_episode,
+                                              parameters.max_start_nullops,
+                                              rng)
+
+
+    experiment.run()
+
+def setupAle(full_rom_path,display_screen,repeat_action_probability):
+    ale = ale_python_interface.ALEInterface()
+    ale.setInt('random_seed', rng.randint(1000))
+
+    if display_screen:
+        import sys
+        if sys.platform == 'darwin':
+            import pygame
+            pygame.init()
+            ale.setBool('sound', False) # Sound doesn't work on OSX
+
+        ale.setBool('display_screen', False)
+
+        from numpy.ctypeslib import as_ctypes
+        ale.setString('record_screen_dir',("record").encode('ascii'))
+    else:
+        ale.setBool('display_screen', False)
+    ale.setFloat('repeat_action_probability',
+                 repeat_action_probability)
+
+    ale.loadROM(full_rom_path)
+    num_actions = len(ale.getMinimalActionSet())
+    return ale, num_actions
+
+def getFullRomPath(rom_name,base_rom_path):
+    if rom_name.endswith('.bin'):
+        rom = rom_name
+    else:
+        rom = "%s.bin" % rom_name
+    full_rom_path = os.path.join(base_rom_path, rom_name)
+    return full_rom_path
+    
 if __name__ == '__main__':
     pass
