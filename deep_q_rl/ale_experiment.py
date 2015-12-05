@@ -53,7 +53,7 @@ class ALEExperiment(object):
             self.start_epoch = False
         if self.start_episode:
             prefix = "training"
-            logging.info(prefix + " epoch: " + str(epoch) + " steps_left: " +
+            logging.info(prefix + " epoch: " + str(self.epoch) + " steps_left: " +
                          str(self.steps_left))
             self._init_episode()
             self.start_lives = self.ale.lives()
