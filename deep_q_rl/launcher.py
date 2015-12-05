@@ -285,7 +285,7 @@ def launchMulti(args, defaults, description):
 
     full_rom_path = getFullRomPath(parameters.rom,defaults.BASE_ROM_PATH)
     print "rom: "+str(full_rom_path)
-    
+
     if parameters.deterministic:
         rng = np.random.RandomState(123456)
     else:
@@ -295,7 +295,9 @@ def launchMulti(args, defaults, description):
         theano.config.dnn.conv.algo_bwd = 'deterministic'
     ale, num_actions = setupAle(full_rom_path,parameters.display_screen,parameters.repeat_action_probability,rng)
 
-
+    network, agent, experiment = buildExperimentAgentNetwork(defaults,parameters,ale,rng)
+    experiment.run()
+def buildExperimentAgentNetwork(defaults,parameters,ale,rng):
     if parameters.nn_file is None:
         network = q_network.DeepQLearner(defaults.RESIZED_WIDTH,
                                          defaults.RESIZED_HEIGHT,
@@ -356,10 +358,7 @@ def launchMulti(args, defaults, description):
                                               parameters.death_ends_episode,
                                               parameters.max_start_nullops,
                                               rng)
-
-
-    experiment.run()
-
+    return network, agent, experiment
 def setupAle(full_rom_path,display_screen,repeat_action_probability,rng):
     ale = ale_python_interface.ALEInterface()
     ale.setInt('random_seed', rng.randint(1000))
@@ -391,6 +390,6 @@ def getFullRomPath(rom_name,base_rom_path):
         rom = "%s.bin" % rom_name
     full_rom_path = os.path.join(base_rom_path, rom)
     return full_rom_path
-    
+
 if __name__ == '__main__':
     pass
