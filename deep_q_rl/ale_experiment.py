@@ -61,7 +61,7 @@ class ALEExperiment(object):
             self.num_steps = 0
             self.start_episode = False
 
-        reward = self._step(self.min_action_set[action])
+        reward = self._step(self.min_action_set[self.action])
         self.terminal_lol = (self.death_ends_episode and
                              self.ale.lives() < self.start_lives)
         terminal = self.ale.game_over() or self.terminal_lol
@@ -71,12 +71,12 @@ class ALEExperiment(object):
             self.steps_left -= self.num_steps
             self.start_episode = True
             if self.steps_left <= 0:
-                self.agent.finish_epoch(epoch)
+                self.agent.finish_epoch(self.epoch)
 
                 if self.test_length > 0:
                     self.agent.start_testing()
-                    self.run_epoch(epoch, self.test_length, True)
-                    self.agent.finish_testing(epoch)
+                    self.run_epoch(self.epoch, self.test_length, True)
+                    self.agent.finish_testing(self.epoch)
                 self.epoch += 1
                 self.start_epoch = True
         else:
