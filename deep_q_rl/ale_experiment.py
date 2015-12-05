@@ -66,7 +66,7 @@ class ALEExperiment(object):
                              self.ale.lives() < self.start_lives)
         terminal = self.ale.game_over() or self.terminal_lol
         self.num_steps += 1
-        if terminal or self.num_steps >= max_steps:
+        if terminal or self.num_steps >= self.steps_left:
             self.agent.end_episode(reward, terminal)
             self.steps_left -= self.num_steps
             self.start_episode = True
