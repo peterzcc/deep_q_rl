@@ -319,9 +319,11 @@ def launchMulti(args, defaults, description):
         should_stop2 = False
         if experiment.epoch <= experiment.num_epochs:
             experiment.take_one_step()
+        else:
             should_stop1 = True
         if experiment2.epoch <= experiment2.num_epochs:
             experiment2.take_one_step()
+        else:
             should_stop2 = True
         if should_stop1 and should_stop2:
             break
