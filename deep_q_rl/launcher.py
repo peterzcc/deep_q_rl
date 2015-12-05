@@ -315,11 +315,15 @@ def launchMulti(args, defaults, description):
                                                             num_actions2,
                                                             getExpPrefix(rom2))
     while True:
+        should_stop1 = False
+        should_stop2 = False
         if experiment.epoch <= experiment.num_epochs:
             experiment.take_one_step()
-        elif experiment2.epoch <= experiment2.num_epochs:
+            should_stop1 = True
+        if experiment2.epoch <= experiment2.num_epochs:
             experiment2.take_one_step()
-        else:
+            should_stop2 = True
+        if should_stop1 and should_stop2:
             break
 
     # experiment.run()
