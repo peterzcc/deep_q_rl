@@ -26,22 +26,6 @@ export PATH=$PATH:$CUDNN_PATH
 export THEANO_FLAGS='device=gpu1'
 NETWORK=atlantis_11-26-06-09_0p01_0p99/network_file_49
 rm -f record/*.png
-python ale_run_watch.py $NETWORK.pkl superbreakout && rm -f $NETWORK.mp4 && ffmpeg -r 60 -i record/%06d.png -c:v mpeg4 $NETWORK.mp4
-
-NETWORK=boxing_11-26-06-06_0p01_0p99/network_file_200
-rm -f record/*.png
-python ale_run_watch.py $NETWORK.pkl boxing && rm -f $NETWORK.mp4 && ffmpeg -r 60 -i record/%06d.png -c:v mpeg4 $NETWORK.mp4
-
-NETWORK=crazy_climber_11-26-06-12_0p01_0p99/network_file_200
-rm -f record/*.png
-python ale_run_watch.py $NETWORK.pkl crazy_climber && rm -f $NETWORK.mp4 && ffmpeg -r 60 -i record/%06d.png -c:v mpeg4 $NETWORK.mp4
-
-NETWORK=space_invaders_11-26-06-18_0p01_0p99/network_file_200
-rm -f record/*.png
-python ale_run_watch.py $NETWORK.pkl space_invaders && rm -f $NETWORK.mp4 && ffmpeg -r 60 -i record/%06d.png -c:v mpeg4 $NETWORK.mp4
-
-NETWORK=seaquest_11-26-06-06_0p01_0p99/network_file_200
-rm -f record/*.png
-python ale_run_watch.py $NETWORK.pkl seaquest && rm -f $NETWORK.mp4 && ffmpeg -r 60 -i record/%06d.png -c:v mpeg4 $NETWORK.mp4
+python ale_run_watch.py $NETWORK.pkl atlantis && rm -f $NETWORK.mp4 && ffmpeg -r 60 -i record/%06d.png -c:v mpeg4 $NETWORK.mp4
 
 
