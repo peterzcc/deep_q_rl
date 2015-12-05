@@ -52,7 +52,7 @@ class ALEExperiment(object):
             self.steps_left = self.epoch_length
             self.start_epoch = False
         if self.start_episode:
-            prefix = "training"
+            prefix = self.agent.exp_pref + " training"
             logging.info(prefix + " epoch: " + str(self.epoch) + " steps_left: " +
                          str(self.steps_left))
             self._init_episode()
