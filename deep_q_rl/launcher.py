@@ -314,8 +314,14 @@ def launchMulti(args, defaults, description):
                                                             rng,
                                                             num_actions2,
                                                             getExpPrefix(rom2))
-    experiment.run_episode(100000,False)
-    experiment2.run_episode(100000,False)
+    while True:
+        if experiment.epoch <= experiment.num_epochs:
+            experiment.take_one_step()
+        elif experiment2.epoch <= experiment2.num_epochs:
+            experiment2.take_one_step()
+        else:
+            break
+
     # experiment.run()
 def buildExperimentAgentNetwork(defaults,parameters,ale,rng,num_actions,exp_pref):
     if parameters.nn_file is None:

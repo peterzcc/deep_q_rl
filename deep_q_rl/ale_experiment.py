@@ -41,6 +41,51 @@ class ALEExperiment(object):
         self.max_start_nullops = max_start_nullops
         self.rng = rng
 
+        # Sequential Usage
+        self.epoch = 1
+        self.start_epoch = True
+        self.start_episode = True
+
+    def take_one_step(self):
+        if self.start_epoch:
+            self.terminal_lol = False # Make sure each epoch starts with a reset.
+            self.steps_left = self.epoch_length
+            self.start_epoch = False
+        if self.start_episode:
+            prefix = "training"
+            logging.info(prefix + " epoch: " + str(epoch) + " steps_left: " +
+                         str(self.steps_left))
+            self._init_episode()
+            self.start_lives = self.ale.lives()
+            self.action = self.agent.start_episode(self.get_observation())
+            self.num_steps = 0
+            self.start_episode = False
+
+        reward = self._step(self.min_action_set[action])
+        self.terminal_lol = (self.death_ends_episode and
+                             self.ale.lives() < self.start_lives)
+        terminal = self.ale.game_over() or self.terminal_lol
+        self.num_steps += 1
+        if terminal or self.num_steps >= max_steps:
+            self.agent.end_episode(reward, terminal)
+            self.steps_left -= self.num_steps
+            self.start_episode = True
+            if self.steps_left <= 0:
+                self.agent.finish_epoch(epoch)
+
+                if self.test_length > 0:
+                    self.agent.start_testing()
+                    self.run_epoch(epoch, self.test_length, True)
+                    self.agent.finish_testing(epoch)
+                self.epoch += 1
+                self.start_epoch = True
+        else:
+            self.action = self.agent.step(reward, self.get_observation())
+
+
+
+
+
     def run(self):
         """
         Run the desired number of training epochs, a testing epoch
@@ -176,7 +221,7 @@ class ALEExperiment(object):
                                  interpolation=cv2.INTER_LINEAR)
 
             # Crop the part we want
-            
+
             crop_y_cutoff = resize_height - CROP_OFFSET - self.resized_height
             cropped = resized[crop_y_cutoff:
                               crop_y_cutoff + self.resized_height, :]
@@ -188,4 +233,3 @@ class ALEExperiment(object):
                               interpolation=cv2.INTER_LINEAR)
         else:
             raise ValueError('Unrecognized image resize method.')
-
