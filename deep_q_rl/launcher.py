@@ -301,8 +301,10 @@ def launchMulti(args, defaults, description):
     network, agent, experiment = buildExperimentAgentNetwork(defaults,parameters,
                                                             ale,
                                                             rng,
-                                                            num_actions)
-    full_rom_path2 = getFullRomPath('breakout',defaults.BASE_ROM_PATH)
+                                                            num_actions,
+                                                            parameters.experiment_prefix)
+    rom2 = 'breakout'
+    full_rom_path2 = getFullRomPath(rom2,defaults.BASE_ROM_PATH)
     ale2, num_actions2 = setupAle(full_rom_path2,
                                 parameters.display_screen,
                                 parameters.repeat_action_probability,
@@ -310,11 +312,12 @@ def launchMulti(args, defaults, description):
     network2, agent2, experiment2 = buildExperimentAgentNetwork(defaults,parameters,
                                                             ale2,
                                                             rng,
-                                                            num_actions2)
+                                                            num_actions2,
+                                                            getExpPrefix(rom2))
     experiment.run_episode(100000,False)
     experiment2.run_episode(100000,False)
     # experiment.run()
-def buildExperimentAgentNetwork(defaults,parameters,ale,rng,num_actions):
+def buildExperimentAgentNetwork(defaults,parameters,ale,rng,num_actions,exp_pref):
     if parameters.nn_file is None:
         network = q_network.DeepQLearner(defaults.RESIZED_WIDTH,
                                          defaults.RESIZED_HEIGHT,
@@ -359,7 +362,7 @@ def buildExperimentAgentNetwork(defaults,parameters,ale,rng,num_actions):
                                   parameters.epsilon_min,
                                   parameters.epsilon_decay,
                                   parameters.replay_memory_size,
-                                  parameters.experiment_prefix,
+                                  exp_pref,
                                   parameters.replay_start_size,
                                   parameters.update_frequency,
                                   rng)
@@ -407,6 +410,9 @@ def getFullRomPath(rom_name,base_rom_path):
         rom = "%s.bin" % rom_name
     full_rom_path = os.path.join(base_rom_path, rom)
     return full_rom_path
-
+def getExpPrefix(rom):
+    name = os.path.splitext(os.path.basename(rom))[0]
+    experiment_prefix = name
+    return experiment_prefix
 if __name__ == '__main__':
     pass
