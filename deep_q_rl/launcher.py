@@ -303,7 +303,7 @@ def launchMulti(args, defaults, description):
                                                                 ale,
                                                                 rng,
                                                                 num_actions,
-                                                                parameters.experiment_prefix)
+                                                                getExpPrefix(rom))
         experiments.append(experiment)
 
 
