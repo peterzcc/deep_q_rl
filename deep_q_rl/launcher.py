@@ -283,6 +283,10 @@ def launchMulti(args, defaults, description):
     logging.basicConfig(level=logging.INFO)
     parameters = process_args(args, defaults, description)
     experiments = []
+    shared_layers = q_network.get_shared_network_dnn(defaults.RESIZED_WIDTH,
+                                                     defaults.RESIZED_HEIGHT,
+                                                     parameters.phi_length,
+                                                     parameters.batch_size)
     for rom in defaults.ROMS_FOR_MULTI_TASK:
         full_rom_path = getFullRomPath(rom,defaults.BASE_ROM_PATH)
         print "rom: "+str(full_rom_path)
@@ -299,11 +303,50 @@ def launchMulti(args, defaults, description):
                                     parameters.repeat_action_probability,
                                     rng)
 
-        network, agent, experiment = buildExperimentAgentNetwork(defaults,parameters,
+        '''network, agent, experiment = buildExperimentAgentNetwork(defaults,parameters,
                                                                 ale,
                                                                 rng,
                                                                 num_actions,
-                                                                getExpPrefix(rom))
+                                                                getExpPrefix(rom))'''
+
+        network = q_network.DeepQLearner(defaults.RESIZED_WIDTH,
+                                         defaults.RESIZED_HEIGHT,
+                                         num_actions,
+                                         parameters.phi_length,
+                                         parameters.discount,
+                                         parameters.learning_rate,
+                                         parameters.rms_decay,
+                                         parameters.rms_epsilon,
+                                         parameters.momentum,
+                                         parameters.clip_delta,
+                                         parameters.freeze_interval,
+                                         parameters.batch_size,
+                                         parameters.network_type,
+                                         parameters.update_rule,
+                                         parameters.batch_accumulator,
+                                         rng,shared_layers)
+
+        agent = ale_agent.NeuralAgent(network,
+                                      parameters.epsilon_start,
+                                      parameters.epsilon_min,
+                                      parameters.epsilon_decay,
+                                      parameters.replay_memory_size,
+                                      getExpPrefix(rom),
+                                      parameters.replay_start_size,
+                                      parameters.update_frequency,
+                                      rng)
+
+        experiment = ale_experiment.ALEExperiment(ale, agent,
+                                                  defaults.RESIZED_WIDTH,
+                                                  defaults.RESIZED_HEIGHT,
+                                                  parameters.resize_method,
+                                                  parameters.epochs,
+                                                  parameters.steps_per_epoch,
+                                                  parameters.steps_per_test,
+                                                  parameters.frame_skip,
+                                                  parameters.death_ends_episode,
+                                                  parameters.max_start_nullops,
+                                                  rng)
         experiments.append(experiment)
 
 
@@ -316,32 +359,7 @@ def launchMulti(args, defaults, description):
         if all_finished:
             break
 
-"""
-    rom2 = 'breakout'
-    full_rom_path2 = getFullRomPath(rom2,defaults.BASE_ROM_PATH)
-    ale2, num_actions2 = setupAle(full_rom_path2,
-                                parameters.display_screen,
-                                parameters.repeat_action_probability,
-                                rng)
-    network2, agent2, experiment2 = buildExperimentAgentNetwork(defaults,parameters,
-                                                            ale2,
-                                                            rng,
-                                                            num_actions2,
-                                                            getExpPrefix(rom2))
-    while True:
-        should_stop1 = False
-        should_stop2 = False
-        if experiment.epoch <= experiment.num_epochs:
-            experiment.take_one_step()
-        else:
-            should_stop1 = True
-        if experiment2.epoch <= experiment2.num_epochs:
-            experiment2.take_one_step()
-        else:
-            should_stop2 = True
-        if should_stop1 and should_stop2:
-            break
-"""
+
     # experiment.run()
 def buildExperimentAgentNetwork(defaults,parameters,ale,rng,num_actions,exp_pref):
     if parameters.nn_file is None:

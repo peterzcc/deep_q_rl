@@ -19,6 +19,56 @@ import theano
 import theano.tensor as T
 from updates import deepmind_rmsprop
 
+def get_shared_network_dnn(input_width, input_height,
+                             num_frames, batch_size):
+    """
+    Build a large network consistent with the DeepMind Nature paper.
+    """
+    from lasagne.layers import dnn
+
+    l_in = lasagne.layers.InputLayer(
+        shape=(None, num_frames, input_width, input_height)
+    )
+
+    l_conv1 = dnn.Conv2DDNNLayer(
+        l_in,
+        num_filters=32,
+        filter_size=(8, 8),
+        stride=(4, 4),
+        nonlinearity=lasagne.nonlinearities.rectify,
+        W=lasagne.init.HeUniform(),
+        b=lasagne.init.Constant(.1)
+    )
+
+    l_conv2 = dnn.Conv2DDNNLayer(
+        l_conv1,
+        num_filters=64,
+        filter_size=(4, 4),
+        stride=(2, 2),
+        nonlinearity=lasagne.nonlinearities.rectify,
+        W=lasagne.init.HeUniform(),
+        b=lasagne.init.Constant(.1)
+    )
+
+    l_conv3 = dnn.Conv2DDNNLayer(
+        l_conv2,
+        num_filters=64,
+        filter_size=(3, 3),
+        stride=(1, 1),
+        nonlinearity=lasagne.nonlinearities.rectify,
+        W=lasagne.init.HeUniform(),
+        b=lasagne.init.Constant(.1)
+    )
+
+    l_hidden1 = lasagne.layers.DenseLayer(
+        l_conv3,
+        num_units=512,
+        nonlinearity=lasagne.nonlinearities.rectify,
+        W=lasagne.init.HeUniform(),
+        b=lasagne.init.Constant(.1)
+    )
+    network_layers = [l_in,l_conv1,l_conv2,l_conv3,l_hidden1]
+    return network_layers
 
 class DeepQLearner:
     """
@@ -29,7 +79,7 @@ class DeepQLearner:
                  num_frames, discount, learning_rate, rho,
                  rms_epsilon, momentum, clip_delta, freeze_interval,
                  batch_size, network_type, update_rule,
-                 batch_accumulator, rng, input_scale=255.0):
+                 batch_accumulator, rng, input_scale=255.0, shared_layers = None):
 
         self.input_width = input_width
         self.input_height = input_height
@@ -50,7 +100,7 @@ class DeepQLearner:
         self.update_counter = 0
 
         self.l_out = self.build_network(network_type, input_width, input_height,
-                                        num_actions, num_frames, batch_size)
+                                        num_actions, num_frames, batch_size, shared_layers)
         if self.freeze_interval > 0:
             self.next_l_out = self.build_network(network_type, input_width,
                                                  input_height, num_actions,
@@ -171,7 +221,11 @@ class DeepQLearner:
         self._q_vals = theano.function([], q_vals[0], givens=q_givens)
 
     def build_network(self, network_type, input_width, input_height,
-                      output_dim, num_frames, batch_size):
+                      output_dim, num_frames, batch_size,shared_layers = None):
+        if shared_layers != None:
+            return self.build_on_shared_nature_network_dnn(input_width, input_height,
+                                                 output_dim, num_frames,
+                                                 batch_size,shared_layers)
         if network_type == "nature_cuda":
             return self.build_nature_network(input_width, input_height,
                                              output_dim, num_frames, batch_size)
@@ -239,8 +293,6 @@ class DeepQLearner:
         l_hidden1 = l_layers[idx]
         pretrained_layers = lasagne.layers.helper.get_all_layers(pretrained_network.l_out)
         pretrained_l_hidden1 = pretrained_layers[idx]
-        #print "number of layers"+str(len(l_layers))
-        #print "number of pretrained layers" + str(len(pretrained_layers))
         pretrained_l_hidden1_values = lasagne.layers.helper.get_all_param_values(pretrained_l_hidden1)
         lasagne.layers.helper.set_all_param_values(l_hidden1, pretrained_l_hidden1_values)
         self.reset_q_hat()
@@ -367,7 +419,29 @@ class DeepQLearner:
 
         return l_out
 
+    def build_on_shared_nature_network_dnn(self, input_width, input_height, output_dim,
+                                 num_frames, batch_size,shared_layers):
+        """
+        Build a large network consistent with the DeepMind Nature paper.
+        """
+        from lasagne.layers import dnn
+        l_hidden1 = lasagne.layers.DenseLayer(
+            shared_layers[3],
+            num_units=512,
+            nonlinearity=lasagne.nonlinearities.rectify,
+            W=lasagne.init.HeUniform(),
+            b=lasagne.init.Constant(.1)
+        )
 
+        l_out = lasagne.layers.DenseLayer(
+            l_hidden1,
+            num_units=output_dim,
+            nonlinearity=None,
+            W=lasagne.init.HeUniform(),
+            b=lasagne.init.Constant(.1)
+        )
+
+        return l_out
 
     def build_nips_network(self, input_width, input_height, output_dim,
                            num_frames, batch_size):
