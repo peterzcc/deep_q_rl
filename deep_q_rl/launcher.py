@@ -282,27 +282,41 @@ def launchMulti(args, defaults, description):
 
     logging.basicConfig(level=logging.INFO)
     parameters = process_args(args, defaults, description)
+    experiments = []
+    for rom in defaults.ROMS_FOR_MULTI_TASK:
+        full_rom_path = getFullRomPath(rom,defaults.BASE_ROM_PATH)
+        print "rom: "+str(full_rom_path)
 
-    full_rom_path = getFullRomPath(parameters.rom,defaults.BASE_ROM_PATH)
-    print "rom: "+str(full_rom_path)
+        if parameters.deterministic:
+            rng = np.random.RandomState(123456)
+        else:
+            rng = np.random.RandomState()
 
-    if parameters.deterministic:
-        rng = np.random.RandomState(123456)
-    else:
-        rng = np.random.RandomState()
+        if parameters.cudnn_deterministic:
+            theano.config.dnn.conv.algo_bwd = 'deterministic'
+        ale, num_actions = setupAle(full_rom_path,
+                                    parameters.display_screen,
+                                    parameters.repeat_action_probability,
+                                    rng)
 
-    if parameters.cudnn_deterministic:
-        theano.config.dnn.conv.algo_bwd = 'deterministic'
-    ale, num_actions = setupAle(full_rom_path,
-                                parameters.display_screen,
-                                parameters.repeat_action_probability,
-                                rng)
+        network, agent, experiment = buildExperimentAgentNetwork(defaults,parameters,
+                                                                ale,
+                                                                rng,
+                                                                num_actions,
+                                                                parameters.experiment_prefix)
+        experiments.append(experiment)
 
-    network, agent, experiment = buildExperimentAgentNetwork(defaults,parameters,
-                                                            ale,
-                                                            rng,
-                                                            num_actions,
-                                                            parameters.experiment_prefix)
+
+    while True:
+        all_finished = True
+        for experiment in experiments:
+            if experiment.epoch <= experiment.num_epochs:
+                experiment.take_one_step()
+                all_finished = False
+        if all_finished:
+            break
+
+"""
     rom2 = 'breakout'
     full_rom_path2 = getFullRomPath(rom2,defaults.BASE_ROM_PATH)
     ale2, num_actions2 = setupAle(full_rom_path2,
@@ -327,7 +341,7 @@ def launchMulti(args, defaults, description):
             should_stop2 = True
         if should_stop1 and should_stop2:
             break
-
+"""
     # experiment.run()
 def buildExperimentAgentNetwork(defaults,parameters,ale,rng,num_actions,exp_pref):
     if parameters.nn_file is None:

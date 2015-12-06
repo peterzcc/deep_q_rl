@@ -60,6 +60,7 @@ class Defaults:
     MAX_START_NULLOPS = 30
     DETERMINISTIC = True
     CUDNN_DETERMINISTIC = False
+    ROMS_FOR_MULTI_TASK = ['breakout', 'superbreakout']
 
 if __name__ == "__main__":
     launcher.launchMulti(sys.argv[1:], Defaults, __doc__)
