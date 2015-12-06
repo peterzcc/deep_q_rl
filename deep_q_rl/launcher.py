@@ -324,7 +324,8 @@ def launchMulti(args, defaults, description):
                                          parameters.network_type,
                                          parameters.update_rule,
                                          parameters.batch_accumulator,
-                                         rng,shared_layers)
+                                         rng,
+                                         shared_layers=shared_layers)
 
         agent = ale_agent.NeuralAgent(network,
                                       parameters.epsilon_start,
