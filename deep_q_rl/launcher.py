@@ -287,6 +287,9 @@ def launchMulti(args, defaults, description):
                                                      defaults.RESIZED_HEIGHT,
                                                      parameters.phi_length,
                                                      parameters.batch_size)
+    roms_abbr = ''
+    for rom in defaults.ROMS_FOR_MULTI_TASK:
+        roms_abbr += rom[0]
     for rom in defaults.ROMS_FOR_MULTI_TASK:
         full_rom_path = getFullRomPath(rom,defaults.BASE_ROM_PATH)
         print "rom: "+str(full_rom_path)
@@ -321,7 +324,7 @@ def launchMulti(args, defaults, description):
                                          parameters.batch_accumulator,
                                          rng,
                                          shared_layers=shared_layers)
-        exp_prefix = getExpPrefix(rom)+'_'+'-'.join(defaults.ROMS_FOR_MULTI_TASK)
+        exp_prefix = getExpPrefix(rom)+'_'+roms_abbr
         agent = ale_agent.NeuralAgent(network,
                                       parameters.epsilon_start,
                                       parameters.epsilon_min,
