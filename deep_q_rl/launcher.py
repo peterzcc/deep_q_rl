@@ -30,6 +30,8 @@ def process_args(args, defaults, description):
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('-r', '--rom', dest="rom", default=defaults.ROM,
                         help='ROM to run (default: %(default)s)')
+    parser.add_argument('-g', '--games', dest="games", default=None,
+                        help='ROMs for the multi task agent')
     parser.add_argument('-e', '--epochs', dest="epochs", type=int,
                         default=defaults.EPOCHS,
                         help='Number of training epochs (default: %(default)s)')
@@ -287,10 +289,15 @@ def launchMulti(args, defaults, description):
                                                      defaults.RESIZED_HEIGHT,
                                                      parameters.phi_length,
                                                      parameters.batch_size)
+    if parameters.games != None:
+        roms_for_multi_task = parameters.games.split('_')
+    else:
+        raise ValueError("Games not specified")
+    #roms_for_multi_task = defaults.ROMS_FOR_MULTI_TASK
     roms_abbr = ''
-    for rom in defaults.ROMS_FOR_MULTI_TASK:
+    for rom in roms_for_multi_task:
         roms_abbr += rom[0]
-    for rom in defaults.ROMS_FOR_MULTI_TASK:
+    for rom in roms_for_multi_task:
         full_rom_path = getFullRomPath(rom,defaults.BASE_ROM_PATH)
         print "rom: "+str(full_rom_path)
 
