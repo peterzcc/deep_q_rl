@@ -303,11 +303,6 @@ def launchMulti(args, defaults, description):
                                     parameters.repeat_action_probability,
                                     rng)
 
-        '''network, agent, experiment = buildExperimentAgentNetwork(defaults,parameters,
-                                                                ale,
-                                                                rng,
-                                                                num_actions,
-                                                                getExpPrefix(rom))'''
 
         network = q_network.DeepQLearner(defaults.RESIZED_WIDTH,
                                          defaults.RESIZED_HEIGHT,
@@ -326,13 +321,13 @@ def launchMulti(args, defaults, description):
                                          parameters.batch_accumulator,
                                          rng,
                                          shared_layers=shared_layers)
-
+        exp_prefix = getExpPrefix(rom)+'_'+'-'.join(defaults.ROMS_FOR_MULTI_TASK)
         agent = ale_agent.NeuralAgent(network,
                                       parameters.epsilon_start,
                                       parameters.epsilon_min,
                                       parameters.epsilon_decay,
                                       parameters.replay_memory_size,
-                                      getExpPrefix(rom),
+                                      exp_prefix,
                                       parameters.replay_start_size,
                                       parameters.update_frequency,
                                       rng)
