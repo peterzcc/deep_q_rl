@@ -290,7 +290,7 @@ def launchMulti(args, defaults, description):
                                                      parameters.phi_length,
                                                      parameters.batch_size)
     if parameters.games != None:
-        roms_for_multi_task = parameters.games.split('_')
+        roms_for_multi_task = parameters.games.split('-')
     else:
         raise ValueError("Games not specified")
     #roms_for_multi_task = defaults.ROMS_FOR_MULTI_TASK
