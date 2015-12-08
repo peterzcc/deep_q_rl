@@ -11,7 +11,7 @@ import sys
 def run_watch():
     command = ['./run_adagrad.py','--epochs','1', '--steps-per-epoch', '0',
                '--test-length', '2500', '--nn-file', sys.argv[1],
-               '--display-screen']
+               '--display-screen','--epsilon-start','0.1']
 
     if len(sys.argv) > 2:
         command.extend(['--rom', sys.argv[2]])
