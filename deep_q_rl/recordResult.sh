@@ -24,14 +24,7 @@ export PYTHONPATH=$CUDNN_PATH
 export PATH=$PATH:$CUDNN_PATH
 #locate libnppc.so
 export THEANO_FLAGS='device=gpu1'
-NETWORK=atlantis_11-26-06-09_0p01_0p99/network_file_49.pkl
-rm -f record/*.png
-python ale_run_watch.py $NETWORK.pkl superbreakout && rm -f $NETWORK.mp4 && ffmpeg -r 60 -i record/%06d.png -c:v mpeg4 $NETWORK.mp4
 
-NETWORK=boxing_11-26-06-06_0p01_0p99/network_file_200.pkl
+NETWORK=seaquest_sas_12-07-13-27_0p01_0p99/network_file_190
 rm -f record/*.png
-python ale_run_watch.py $NETWORK.pkl superbreakout && rm -f $NETWORK.mp4 && ffmpeg -r 60 -i record/%06d.png -c:v mpeg4 $NETWORK.mp4
-
-NETWORK=crazy_climber_11-26-06-12_0p01_0p99/network_file_200.pkl
-rm -f record/*.png
-python ale_run_watch.py $NETWORK.pkl superbreakout && rm -f $NETWORK.mp4 && ffmpeg -r 60 -i record/%06d.png -c:v mpeg4 $NETWORK.mp4
+python ale_run_watch.py $NETWORK.pkl seaquest && rm -f $NETWORK.mp4 && ffmpeg -r 60 -i record/%06d.png -c:v mpeg4 $NETWORK.mp4
