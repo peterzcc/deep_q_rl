@@ -79,7 +79,7 @@ class DeepQLearner:
                  num_frames, discount, learning_rate, rho,
                  rms_epsilon, momentum, clip_delta, freeze_interval,
                  batch_size, network_type, update_rule,
-                 batch_accumulator, rng, input_scale=255.0, shared_layers = None):
+                 batch_accumulator, rng, input_scale=255.0, shared_layers = None,pretrained_network = None):
 
         self.input_width = input_width
         self.input_height = input_height
@@ -101,6 +101,9 @@ class DeepQLearner:
 
         self.l_out = self.build_network(network_type, input_width, input_height,
                                         num_actions, num_frames, batch_size, shared_layers)
+        if pretrained_network != None:
+            self.get_pretrained_network(pretrained_network,3)
+
         if self.freeze_interval > 0:
             self.next_l_out = self.build_network(network_type, input_width,
                                                  input_height, num_actions,
@@ -291,6 +294,9 @@ class DeepQLearner:
     def get_pretrained_network(self,pretrained_network,idx):
         l_layers = lasagne.layers.helper.get_all_layers(self.l_out)
         l_hidden1 = l_layers[idx]
+        for i in range(0,idx-1):
+            l_layers[i].params[l_layers[i].W].remove("trainable")
+            l_layers[i].params[l_layers[i].b].remove("trainable")
         pretrained_layers = lasagne.layers.helper.get_all_layers(pretrained_network.l_out)
         pretrained_l_hidden1 = pretrained_layers[idx]
         pretrained_l_hidden1_values = lasagne.layers.helper.get_all_param_values(pretrained_l_hidden1)

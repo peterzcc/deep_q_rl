@@ -249,8 +249,9 @@ def launch(args, defaults, description):
                                          parameters.network_type,
                                          parameters.update_rule,
                                          parameters.batch_accumulator,
-                                         rng)
-        network.get_pretrained_network(pretrained_network,-1)
+                                         rng,
+                                         pretrained_network =pretrained_network)
+        #network.get_pretrained_network(pretrained_network,-1)
         #network = cPickle.load(handle)
 
     agent = ale_agent.NeuralAgent(network,
