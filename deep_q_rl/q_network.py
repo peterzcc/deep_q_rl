@@ -101,8 +101,7 @@ class DeepQLearner:
 
         self.l_out = self.build_network(network_type, input_width, input_height,
                                         num_actions, num_frames, batch_size, shared_layers)
-        if pretrained_network != None:
-            self.get_pretrained_network(pretrained_network,3)
+
 
         if self.freeze_interval > 0:
             self.next_l_out = self.build_network(network_type, input_width,
@@ -110,6 +109,8 @@ class DeepQLearner:
                                                  num_frames, batch_size)
             self.reset_q_hat()
 
+        if pretrained_network != None:
+            self.get_pretrained_network(pretrained_network,3)
         states = T.tensor4('states')
         next_states = T.tensor4('next_states')
         rewards = T.col('rewards')
