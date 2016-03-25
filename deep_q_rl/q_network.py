@@ -294,7 +294,7 @@ class DeepQLearner:
     def get_pretrained_network(self,pretrained_network,idx):
         l_layers = lasagne.layers.helper.get_all_layers(self.l_out)
         l_hidden1 = l_layers[idx]
-        for i in range(0,idx-1):
+        for i in range(1,idx-1):
             l_layers[i].params[l_layers[i].W].remove("trainable")
             l_layers[i].params[l_layers[i].b].remove("trainable")
         pretrained_layers = lasagne.layers.helper.get_all_layers(pretrained_network.l_out)
