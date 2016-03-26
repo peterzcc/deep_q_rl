@@ -185,7 +185,7 @@ class DeepQLearner:
         else:
             raise ValueError("Bad accumulator: {}".format(batch_accumulator))
 
-        params = lasagne.layers.helper.get_all_params(self.l_out)
+        params = lasagne.layers.helper.get_all_params(self.l_out,trainable=True)
         train_givens = {
             states: self.imgs_shared[:, :-1],
             next_states: self.imgs_shared[:, 1:],
