@@ -110,7 +110,7 @@ class DeepQLearner:
             self.reset_q_hat()
 
         if pretrained_network != None:
-            self.get_pretrained_network(pretrained_network,4)
+            self.get_pretrained_network(pretrained_network,3)
         states = T.tensor4('states')
         next_states = T.tensor4('next_states')
         rewards = T.col('rewards')
